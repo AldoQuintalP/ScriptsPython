@@ -1,0 +1,12 @@
+# Archivo de configuración para pruebas. 
+paths:
+  sandbx : C:\\Users\\simetrical\\Documents\\Sandbx\\
+  workng : C:\\Users\\simetrical\\Documents\\2-Workng\\
+  clients : C:\\Users\\simetrical\\Clients
+  path : C:\Users\simetrical\Documents\Sandbx/
+  pathImp : C:/Users/simetrical/Clients
+
+# [MySqlbd]
+# host = 127.0.0.1
+# user = root
+# password = 1234
