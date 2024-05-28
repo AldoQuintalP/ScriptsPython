@@ -1,0 +1,19 @@
+1,NombreColumnas,Separador,col,col2,dato
+2,F1,1,Client,%s,smallint(5) unsigned
+3,NumeroParte,2,Branch,%s,smallint(5) unsigned
+4,Descripcion,3,Date,%s,date
+5,Almacen,4,NumeroParte,%s,varchar(20)
+6,Existencia,5,Descripcion,%s,varchar(30)
+7,`CostoUnit$`,6,Almacen,%s,varchar(10)
+8,`Costo$`,7,Existencia,%s,"decimal(15,4)"
+9,`Precio$`,8,`CostoUnit$`,%s,"decimal(18,4)"
+10,`Precio2$`,9,`Costo$`,%s,"decimal(35,10)"
+11,`Precio3$`,10,`Precio$`,%s,"decimal(18,4)"
+12,`Precio4$`,11,`Precio2$`,%s,"decimal(18,4)"
+13,`Precio5$`,12,`Precio3$`,%s,"decimal(18,4)"
+14,UltimaCompra,13,`Precio4$`,%s,varchar(10)
+15,UltimaVenta,14,`Precio5$`,%s,"decimal(18,4)"
+16,FechaAlta,15,UltimaCompra,%s,date
+17,TipoParte,16,UltimaVenta,%s,date
+18,Clasificacion,17,FechaAlta,%s,date
+,,18,TipoParte,%s,varchar(30)

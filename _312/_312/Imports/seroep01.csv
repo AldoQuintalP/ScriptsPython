@@ -1,0 +1,18 @@
+1,NombreColumnas,Separador,col,col2,dato
+2,F1,,Client,%s,smallint(5) unsigned
+3,NumeroOT,,Branch,%s,smallint(5) unsigned
+4,FechaApertura,,Date,%s,date
+5,Vin,,NumeroOT,%s,varchar(10)
+6,Dias,,Vin,%s,varchar(17)
+7,`Costo$`,,FechaApertura,%s,date
+8,`Venta$`,,Dias,%s,int(11)
+9,TipoOrden,,Taller,%s,varchar(30)
+10,Taller,,TipoOrden,%s,varchar(30)
+11,NumeroAsesor,,`Venta$`,%s,"decimal(35,10)"
+12,NombreAsesor,,`Costo$`,%s,"decimal(35,10)"
+13,NombreCliente,,NumeroAsesor,%s,varchar(10)
+14,Direccion,,NombreAsesor,%s,varchar(30)
+15,Telefono,,NombreCliente,%s,varchar(30)
+16,CP,,Direccion,%s,varchar(80)
+,,,Telefono,%s,varchar(15)
+,,,CP,%s,char(5)

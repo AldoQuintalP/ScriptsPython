@@ -1,0 +1,17 @@
+1,NombreColumnas,Separador,col,col2,dato
+2,F1,1,Client,%s,smallint(5) unsigned
+3,NumeroOT,2,Branch,%s,smallint(5) unsigned
+4,FechaEntrega,3,Date,%s,date
+5,NumeroParte,4,NumeroOT,%s,varchar(10)
+6,Descripcion,5,Taller,%s,varchar(30)
+7,Cantidad,6,TipoOrden,%s,varchar(30)
+8,`CostoUnit$`,7,FechaEntrega,%s,date
+9,`Costo$`,8,NumeroParte,%s,varchar(20)
+10,`VentaUnit$`,9,Descripcion,%s,varchar(30)
+11,`Venta$`,10,Cantidad,%s,"decimal(15,4)"
+12,`Utilidad$`,11,`VentaUnit$`,%s,"decimal(18,4)"
+13,Margen,12,`Venta$`,%s,"decimal(35,10)"
+14,TipoOrden,13,`CostoUnit$`,%s,"decimal(18,4)"
+15,Taller,14,`Costo$`,%s,"decimal(35,10)"
+,,15,`Utilidad$`,%s,"decimal(18,4)"
+,,16,Margen,%s,"decimal(15,4)"
