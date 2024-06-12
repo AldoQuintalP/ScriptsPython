@@ -1,0 +1,25 @@
+1,NombreColumnas,Separador,col,col2,dato
+2,F1,1,Client,%s,smallint(5) unsigned
+3,Factura,2,Branch,%s,smallint(5) unsigned
+4,FechaFactura,3,Factura,%s,varchar(15)
+5,NumeroParte,4,FechaFactura,%s,date
+6,Cantidad,5,TipoPago,%s,varchar(30)
+7,`CostoUnit$`,6,TipoVenta,%s,varchar(30)
+8,`Costo$`,7,TipoParte,%s,varchar(30)
+9,`VentaUnit$`,8,NumeroParte,%s,varchar(20)
+10,`Venta$`,9,Cantidad,%s,"decimal(15,4)"
+11,`Utilidad$`,10,`VentaUnit$`,%s,"decimal(18,4)"
+12,Margen,11,`Venta$`,%s,"decimal(35,10)"
+13,NumeroVendedor,12,`CostoUnit$`,%s,"decimal(18,4)"
+14,NombreVendedor,13,`Costo$`,%s,"decimal(35,10)"
+15,NombreCliente,14,`Utilidad$`,%s,"decimal(18,4)"
+16,RFC,15,Margen,%s,"decimal(15,4)"
+17,Direccion,16,NumeroVendedor,%s,varchar(10)
+18,Telefono,17,NombreVendedor,%s,varchar(30)
+19,CP,18,RFC,%s,varchar(13)
+20,Email,19,NombreCliente,%s,varchar(30)
+21,TipoVenta,20,Direccion,%s,varchar(80)
+22,TipoPago,21,Telefono,%s,varchar(15)
+23,TipoParte,22,CP,%s,char(5)
+,,23,Email,%s,varchar(40)
+,,24,VentasNetas,%s,tinyint(4)
