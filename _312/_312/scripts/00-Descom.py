@@ -52,4 +52,4 @@ for archivo in lista:
             nuevo_nombre = os.path.join(rutar, archivo.replace("REFVTA", "REFMOS"))
             os.rename(ruta_completa, nuevo_nombre)
 
-os.chdir("C:\\Users\\Aldo Quintal\\Clients")
+os.chdir("C:\\Users\\simetrical\\Clients")
