@@ -1,10 +1,10 @@
 # Archivo de configuración para pruebas. 
 paths:
-  sandbx : C:\\Users\\simetrical\\Documents\\Sandbx\\
-  workng : C:\\Users\\simetrical\\Documents\\2-Workng\\
-  clients : C:\\Users\\simetrical\\Clients
-  path : C:\Users\simetrical\Documents\Sandbx/
-  pathImp : C:/Users/simetrical/Clients
+  sandbx : C:\\Users\\Aldo Quintal\\Documents\\Sandbx\\
+  workng : C:\\Users\\Aldo Quintal\\Documents\\2-Workng\\
+  clients : C:\\Users\\Aldo Quintal\\Clients
+  path : C:\Users\Aldo Quintal\Documents\Sandbx/
+  pathImp : C:/Users/Aldo Quintal/Clients
 
 # [MySqlbd]
 # host = 127.0.0.1
