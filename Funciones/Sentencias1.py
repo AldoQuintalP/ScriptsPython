@@ -1,132 +1,110 @@
 import pandas as pd
 import mysql.connector
-import configparser
 from Funciones import Descompress as s
+import logging
 
-def create(exportar,report,brach,cnn):
-    cursor= cnn.cursor()
-            # Lee el archivo CSV en un DataFrame de Pandas
+# Configurar el logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def create(exportar, report, branch, cnn):
+    cursor = cnn.cursor()
     df = pd.read_csv(exportar)
-
-            # Crea una tabla en MySQL con las columnas y tipos de datos especificados en el archivo CSV
-    create_table_query = f"CREATE TABLE IF NOT EXISTS {report}{brach} ("
+    create_table_query = f"CREATE TABLE IF NOT EXISTS {report}{branch} ("
 
     for index, row in df.iterrows():
-                columna = row["col"]
-                tipo_dato = row["dato"]
-                create_table_query += f"{columna} {tipo_dato}, "
+        columna = row["col"]
+        tipo_dato = row["dato"]
+        create_table_query += f"{columna} {tipo_dato}, "
                 
-    create_table_query = create_table_query[:-2]  # Elimina la última coma y espacio
+    create_table_query = create_table_query[:-2]  # Eliminate the last comma and space
     create_table_query += f") DEFAULT CHARACTER SET latin1;"
 
     try:
-            cursor.execute(create_table_query)
-            cnn.commit()
-            print("Tabla creada correctamente en MySQL.")
+        cursor.execute(create_table_query)
+        cnn.commit()
+        logging.info("Table created successfully in MySQL.")
     except mysql.connector.Error as err:
-                print(f"Error de MySQL: {err}")
+        logging.info(f"MySQL Error: {err}")
 
-def drop(report,branch,client,cnn):
-        cursor = cnn.cursor()
-        print("********** Limpiando base " + report + " Del cliente: " + client + " **********")
-        sql = f"DROP TABLE {report}{branch}"
-        try:
-                cursor.execute(sql)
-                cnn.commit()
-                print("********** Base Limpiada Correctamente **********")
-        except:
-                print("********** Error al Limpiar Base **********")
-                cnn.rollback()
+def drop(report, branch, client, cnn):
+    cursor = cnn.cursor()
+    logging.info(f"Cleaning base {report} for client: {client}")
+    sql = f"DROP TABLE IF EXISTS {report}{branch}"
+    try:
+        cursor.execute(sql)
+        cnn.commit()
+        logging.info("Base cleaned successfully")
+    except mysql.connector.Error as err:
+        logging.info("Error cleaning base")
+        cnn.rollback()
 
-def insert(report,branch,cnn,values,values2,tuplas):
-        print("********** Agregando registros..." + report + " a la base: " + report + " **********")
-        cursor = cnn.cursor()
-
-        #(Client,Branch,Date,NumeroOT,FechaEntrega,FechaCierre,Taller,TipoOrden,TipoServicio,Motivo,Status,NumeroParte,Descripcion,Cantidad,VentaUnit,Venta,CostoUnit,Costo,Utilidad,Margen,Vin,RFC,Modelo,Version)
-        sql = f"INSERT INTO {report}{branch} ({values}) VALUES({values2})"
-
-        try:
-                cursor.executemany(sql,tuplas)
-                cnn.commit()
-                print("********** Registros agregados correctamente **********")
-        
-        except:
-                cnn.rollback()
-                print("********** Error al cargar los registros **********")
-                cnn.close()
-
-def export(report,branch,cnn):
-    # Crea un cursor
+def insert(report, branch, cnn, values, values2, tuplas):
+    logging.info(f"Adding records to {report} in the database: {report}")
     cursor = cnn.cursor()
 
-    # Nombre de la tabla
+    sql = f"INSERT INTO {report}{branch} ({values}) VALUES({values2})"
+
+    try:
+        cursor.executemany(sql, tuplas)
+        cnn.commit()
+        logging.info("Records added successfully")
+    except mysql.connector.Error as err:
+        cnn.rollback()
+        logging.info("Error loading records")
+        cnn.close()
+
+def export(report, branch, cnn):
+    cursor = cnn.cursor()
+
     table_name = f'{report}{branch}'
-
-    # Genera el encabezado del dump
     dump = f"-- MySQL dump\n" \
-        f"--\n" \
-        f"-- Host: localhost    Database: sim_\n" \
-        f"-- ------------------------------------------------------\n" \
-        f"-- Server version {cnn.get_server_info()}\n"
+           f"--\n" \
+           f"-- Host: localhost    Database: sim_\n" \
+           f"-- ------------------------------------------------------\n" \
+           f"-- Server version {cnn.get_server_info()}\n"
 
-    # Obtiene la estructura de la tabla
     cursor.execute(f"SHOW CREATE TABLE {table_name}")
     table_structure = cursor.fetchone()
     table_create_statement = table_structure[1]
 
-    # Genera el encabezado para la tabla
     dump += f"\n\n-- Table structure for table `{table_name}`\n\n"
     dump += f"DROP TABLE IF EXISTS `{table_name}`;\n"
     dump += table_create_statement + ";\n"
 
-    # Genera el encabezado para los datos
     dump += f"\n-- Dumping data for table `{table_name}`\n\n"
     dump += f"INSERT INTO `{table_name}` VALUES "
 
-    # Obtiene y exporta los datos de la tabla
     cursor.execute(f"SELECT * FROM {table_name}")
     data = cursor.fetchall()
 
-    # Formatea los valores de datos para la inserción masiva
     value_strings = []
     for row in data:
         values = ", ".join([f"'{str(value)}'" if value is not None else "NULL" for value in row])
         value_strings.append(f"({values})")
 
-    # Combina los valores en una sola línea
     dump += ', '.join(value_strings) + ';\n'
 
-    # Cierra el cursor y la conexión
     cursor.close()
     cnn.close()
     
-    export_path= s.ruta['Sandbx'] + report +''+ branch +'.sql.dump'
-    print(f'Export path ... {export_path}')
-    # Guarda el dump en un archivo
+    export_path = s.ruta['Sandbx'] + report +''+ branch +'.sql.dump'
+    logging.info(f'Export path: {export_path}')
     with open(export_path, 'w') as f:
         f.write(dump)
 
-    print("Exportación completada en "+report+""+branch+".sql")
+    logging.info(f"Export completed for {report}{branch}.sql")
 
-def change(report,branch,cnn,exportar):
-   # Lee el archivo CSV en un DataFrame de Pandas
+def change(report, branch, cnn, exportar):
     df = pd.read_csv(exportar)
+    columnas_a_cambiar = ["Costo", "CostoCompra","CostoActual","CostoUnit"]
 
- # Columnas a modificar
-    columnas_a_cambiar = ["Costo", "CostoCompra","CostoActual","CostoUnit"]  # Agrega las columnas que deseas modificar
-
- # Itera a través de las filas del archivo CSV
     for index, row in df.iterrows():
         nombre_actual = row["col"]
-        nuevo_nombre = f"{nombre_actual}$"  # Agrega el signo "$" al nombre
-        tipo_dato = row["dato"]  # Obtiene el tipo de dato del archivo CSV
+        nuevo_nombre = f"{nombre_actual}$"
+        tipo_dato = row["dato"]
 
-    # Verifica si el nombre de la columna está en la lista de columnas a cambiar
         if nombre_actual in columnas_a_cambiar:
-        # Genera una consulta SQL para modificar la tabla
             alter_query = f"ALTER TABLE {report}{branch} CHANGE {nombre_actual} {nuevo_nombre} {tipo_dato};"
-
-        # Ejecuta la consulta SQL
             cursor = cnn.cursor()
             cursor.execute(alter_query)
             cursor.close()
