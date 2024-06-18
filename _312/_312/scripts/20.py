@@ -72,8 +72,8 @@ else:
     model = '01'
     ruta = r'/_312'
 
-    layouts=["invnue","invusa","refcom","refinv","refoep","seroep","sertec","vtanue","vtausa","refmos","refser"]
-    #layouts=["invnue"]
+    #layouts=["invnue","invusa","refcom","refinv","refoep","seroep","sertec","vtanue","vtausa","refmos","refser"]
+    layouts=["invnue"]
 
 ######## For Interacción de Layouts#######
     for i in layouts:

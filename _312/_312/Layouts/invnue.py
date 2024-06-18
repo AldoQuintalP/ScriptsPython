@@ -4,7 +4,11 @@ from pyspark.sql.types import DecimalType, DateType, StringType
 from Funciones import FuncionesExternas as FE, Sentencias as s, conexion as c
 
 # Configure logger
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 def invnue01(spark, datasource, columnas, client, branch, report):
