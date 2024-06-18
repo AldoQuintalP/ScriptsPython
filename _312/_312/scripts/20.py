@@ -102,10 +102,10 @@ else:
             print("Enviando a Procesamiento " + report)
         ###convierte el report a funcion ####
             project = getattr(sys.modules[__name__],report)
-            #print(f'Project ... {project}')
-            #print(f'Client ... {client}')
-            #print(f'Branch ... {branch}')
-            #print(f'i ... {i}')
+            print(f'Project ... {project}')
+            print(f'Client ... {client}')
+            print(f'Branch ... {branch}')
+            print(f'i ... {i}')
             project(spark,path,pathImp,client,branch,i)
             
         except Exception as e:
