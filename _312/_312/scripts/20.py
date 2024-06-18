@@ -54,7 +54,9 @@ else:
     #####procesamiento
     model = '01'
     ruta = r'/_312'
-    layouts = ["refser"]
+
+    #layouts=["invnue","invusa","refinv","refoep","seroep","sertec","vtanue","vtausa","refmos","refser"]
+    layouts = ["refinv"]
 
 ######## For Interacción de Layouts#######
     for i in layouts:
