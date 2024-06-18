@@ -106,6 +106,9 @@ else:
             print(f'Client ... {client}')
             print(f'Branch ... {branch}')
             print(f'i ... {i}')
+            print(f'Spark: {spark}')
+            print(f'Path .. {path}')
+            print(f'Path imp: {pathImp}')
             project(spark,path,pathImp,client,branch,i)
             
         except Exception as e:
