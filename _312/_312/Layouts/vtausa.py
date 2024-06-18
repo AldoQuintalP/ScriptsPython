@@ -1,11 +1,14 @@
+import logging
 from pyspark.sql import functions as F
 from pyspark.sql.types import DecimalType, DateType, StringType
 from Funciones import FuncionesExternas as FE, Sentencias as s, conexion as c
 import os
 import sys
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def vtausa01(spark, datasource, columnas, client, branch, report):
-    print("**************************************************************************************************************************************************************")
 
     os.environ['PYSPARK_PYTHON'] = sys.executable
     os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
@@ -104,10 +107,10 @@ def vtausa01(spark, datasource, columnas, client, branch, report):
     try:
         cursor.executemany(sql, tuplas)
         cnn.commit()
-        print("********** Registros agregados correctamente **********")
+        logger.info("********** Registros agregados correctamente **********")
     except:
         cnn.rollback()
-        print("********** Error al cargar los registros **********")
+        logger.error("********** Error al cargar los registros **********")
     s.change(report, branch, cnn, columnas)
     s.export(report, branch, cnn, client)
-    print("******************************* Finaliza Procesamiento " + report + "" + branch + " Del Cliente: " + client + " ***********************************" )
+    logger.info("******************************* Finaliza Procesamiento " + report + "" + branch + " Del Cliente: " + client + " ***********************************" )
