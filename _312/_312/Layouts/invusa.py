@@ -59,7 +59,7 @@ def invusa01(spark, datasource, columnas, client, branch, report):
 
     # Selecciona las columnas necesarias y exporta los datos
     export = data_n.select([F.col(columna) for columna in nombresColumnasExp]).filter((F.col("Vin") != "VIN") & (F.col("Vin") != ""))
-    export.show()
+    #export.show()
 
     ########################################## Se pasa el archivo a DF y se obtienen los meses actualizados ###################
     logger.info("********** Transformado a Pandas DF **********")

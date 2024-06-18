@@ -56,7 +56,8 @@ else:
     ruta = r'/_312'
 
     #layouts=["invnue","invusa","refinv","refoep","seroep","sertec","vtanue","vtausa","refmos","refser"]
-    layouts = ["refinv"]
+    layouts = ["invnue","invusa","refinv","refoep","seroep","sertec","refser"]
+    #layouts = ["refinv"]
 
 ######## For Interacción de Layouts#######
     for i in layouts:
