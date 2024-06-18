@@ -19,9 +19,8 @@ def invnue01(spark, datasource, columnas, client, branch, report):
 
     # Lee el archivo import.csv para obtener los nombres de las columnas
     imp = spark.read.option("header", True).csv(columnas)
-    logger.info(f'imp invnue: {imp}')
     nombresColumnas = [row[1] for row in imp.collect()]
-    logger.info(f'Nombres col Invnue: {nombresColumnas}')
+   
 
     # Lee y procesa los datos desde el archivo fuente
     data = spark.read.text(datasource)
