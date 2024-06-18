@@ -25,13 +25,10 @@ def invnue01(spark, datasource, columnas, client, branch, report):
 
     # Lee y procesa los datos desde el archivo fuente
     data = spark.read.text(datasource)
-    logger.info(f'Data spark: {data}')
     data = data.withColumn("columns", F.split(data["value"], "\\|"))
-    logger.info(f'Data columns: {data}')
     expresiones = [f"columns[{i}] as {columna}" for i, columna in enumerate(nombresColumnas)]
     data = data.selectExpr(*expresiones)
     
-    logger.info("invnue ##########")
 
     # Realiza las transformaciones en cadena
     data = (data
