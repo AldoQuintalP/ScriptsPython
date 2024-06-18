@@ -1,11 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.types import DecimalType, DateType, StringType
 from Funciones import FuncionesExternas as FE, Sentencias as s, conexion as c
-import logging
-
-# Configure logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 def sertec01(spark, datasource, columnas, client, branch, report):
     # Load defined functions
@@ -13,7 +8,7 @@ def sertec01(spark, datasource, columnas, client, branch, report):
     LTexto = F.udf(lambda z: FE.LimpiaTexto(z), StringType())
     LEmail = F.udf(lambda z: FE.LimpiaEmail(z), StringType())
 
-    # Read the import.csv file to get column names
+    # Read the import.csv file to get the column names
     imp = spark.read.option("header", True).csv(columnas)
     nombresColumnas = [row[1] for row in imp.collect()]
 
@@ -44,14 +39,12 @@ def sertec01(spark, datasource, columnas, client, branch, report):
     expor = spark.read.option("header", True).csv(columnas)
     nombresColumnasExp = [row[3] for row in expor.collect()]
 
-    # Select and export necessary columns
+    # Select necessary columns and filter data
     export = data.select([F.col(columna) for columna in nombresColumnasExp])
     export = export.filter((F.col("NumeroOT") != "NUMEROOT") & (F.col("NumeroOT") != ""))
 
     # Convert to Pandas DataFrame
-    logger.info("********** Transforming to Pandas DataFrame **********")
     pandas_df = export.toPandas()
-    logger.info("Conversion Complete")
     tuplas = list(pandas_df.itertuples(index=False, name=None))
 
     # Database connection
@@ -62,8 +55,7 @@ def sertec01(spark, datasource, columnas, client, branch, report):
     s.drop(report, branch, client, cnn)
     s.create(columnas, report, branch, cnn)
 
-    # Insert data into database
-    logger.info(f"********** Adding records to {report}{branch} for client {client} **********")
+    # Insert data into the database
     cursor = cnn.cursor()
     Exp = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col")).alias("cadena"))
     Exp2 = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col2")).alias("cadena2"))
@@ -75,13 +67,12 @@ def sertec01(spark, datasource, columnas, client, branch, report):
     try:
         cursor.executemany(sql, tuplas)
         cnn.commit()
-        logger.info("********** Records added successfully **********")
-    except Exception as e:
+        print("********** Records added successfully **********")
+    except:
         cnn.rollback()
-        logger.error(f"********** Error adding records: {e} **********")
+        print("********** Error adding records **********")
 
     # Apply changes and export data
     s.change(report, branch, cnn, columnas)
     s.export(report, branch, cnn, client)
-
-    logger.info(f"******************************* Processing complete for {report}{branch} for client {client} ***********************************")
+    print(f"******************************* Processing complete for {report}{branch} for client {client} ***********************************")
