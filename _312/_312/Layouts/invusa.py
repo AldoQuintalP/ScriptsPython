@@ -30,8 +30,8 @@ def invusa01(spark, datasource, columnas, client, branch, report):
     data = data.selectExpr(*expresiones).select(data.columns[1:]).drop("None")
 
     # Muestra el DataFrame resultante
-    data.show()
-    data.printSchema()
+    # data.show()
+    # data.printSchema()
 
     # Realiza las transformaciones en cadena
     data_n = data.withColumn("Client", F.lit(client).cast(IntegerType())) \
