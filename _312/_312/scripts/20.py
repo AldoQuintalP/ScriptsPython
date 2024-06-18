@@ -43,17 +43,17 @@ print("Cliente: " + client + " Branch: " + branch)
 #sys.path.append(layouts_dir)
 #print(layouts_dir)
 
-from _312.Layouts.invnue import *
-from _312.Layouts.seroep import *
-from _312.Layouts.refcom import *
-from _312.Layouts.refinv import *
-from _312.Layouts.invusa import *
-from _312.Layouts.refoep import *
-from _312.Layouts.vtanue import *
-from _312.Layouts.vtausa import *
-from _312.Layouts.sertec import *
-from _312.Layouts.refmos import *
-from _312.Layouts.refser import *
+from _312._312.Layouts.invnue import *
+from _312._312.Layouts.seroep import *
+from _312._312.Layouts.refcom import *
+from _312._312.Layouts.refinv import *
+from _312._312.Layouts.invusa import *
+from _312._312.Layouts.refoep import *
+from _312._312.Layouts.vtanue import *
+from _312._312.Layouts.vtausa import *
+from _312._312.Layouts.sertec import *
+from _312._312.Layouts.refmos import *
+from _312._312.Layouts.refser import *
 
 
 #from QuiterM.Layouts.refmos import *
