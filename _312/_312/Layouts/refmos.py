@@ -3,7 +3,7 @@ from pyspark.sql.types import DecimalType, DateType, StringType
 from Funciones import FuncionesExternas as FE, Sentencias as s, conexion as c
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def refmos01(spark, datasource, columnas, client, branch, report):
@@ -15,14 +15,12 @@ def refmos01(spark, datasource, columnas, client, branch, report):
     LEmail = F.udf(lambda z: FE.LimpiaEmail(z), StringType())
 
     # Lee el archivo import.csv para obtener los nombres de las columnas
-    imp = spark.read.option("header", True).csv(columnas)
-    nombresColumnas = [row[1] for row in imp.collect()]
+    nombresColumnas = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[1]).collect()
 
     # Lee y procesa los datos desde el archivo fuente
     data = spark.read.text(datasource)
     data = data.withColumn("columns", F.split(data["value"], "\\|"))
-    expresiones = [f"columns[{i}] as {columna}" for i, columna in enumerate(nombresColumnas)]
-    data = data.selectExpr(*expresiones)
+    data = data.selectExpr(*[f"columns[{i}] as {columna}" for i, columna in enumerate(nombresColumnas)])
 
     # Realiza las transformaciones en cadena
     data = (data
@@ -63,8 +61,7 @@ def refmos01(spark, datasource, columnas, client, branch, report):
                         .otherwise(1)))
 
     # Lee las columnas desde el archivo exportar.csv
-    expor = spark.read.option("header", True).csv(columnas)
-    nombresColumnasExp = [row[3] for row in expor.collect()]
+    nombresColumnasExp = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[3]).collect()
 
     # Selecciona las columnas necesarias y exporta los datos
     export = data.select([F.col(columna) for columna in nombresColumnasExp])
@@ -89,6 +86,7 @@ def refmos01(spark, datasource, columnas, client, branch, report):
     ############################## INSERCIÓN DA DATOS ######################################
     logger.info("Agregando registros...")
     cursor = cnn.cursor()
+    expor = spark.read.option("header", True).csv(columnas)
     Exp = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col")).alias("cadena"))
     Exp2 = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col2")).alias("cadena2"))
 

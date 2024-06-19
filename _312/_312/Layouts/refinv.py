@@ -14,8 +14,7 @@ def refinv01(spark, datasource, columnas, client, branch, report):
     LEmail = F.udf(lambda z: FE.LimpiaEmail(z), StringType())
 
     # Read the import.csv file to get column names
-    imp = spark.read.option("header", True).csv(columnas)
-    nombresColumnas = [row[1] for row in imp.collect()]
+    nombresColumnas = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[1]).collect()
 
     # Read and process data from the source file
     data = spark.read.text(datasource)
@@ -47,8 +46,7 @@ def refinv01(spark, datasource, columnas, client, branch, report):
            )
 
     # Read export.csv to get export column names
-    expor = spark.read.option("header", True).csv(columnas)
-    nombresColumnasExp = [row[3] for row in expor.collect()]
+    nombresColumnasExp = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[3]).collect()
 
     # Select and export necessary columns
     export = data.select([F.col(columna) for columna in nombresColumnasExp])
@@ -71,6 +69,7 @@ def refinv01(spark, datasource, columnas, client, branch, report):
     # Insert data into database
     logger.info(f"********** Adding records to {report} for {client} **********")
     cursor = cnn.cursor()
+    expor = spark.read.option("header", True).csv(columnas)
     Exp = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col")).alias("cadena"))
     Exp2 = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col2")).alias("cadena2"))
 

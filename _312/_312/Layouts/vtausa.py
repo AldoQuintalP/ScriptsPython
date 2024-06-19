@@ -5,7 +5,7 @@ from Funciones import FuncionesExternas as FE, Sentencias as s, conexion as c
 import os
 import sys
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def vtausa01(spark, datasource, columnas, client, branch, report):
@@ -19,14 +19,12 @@ def vtausa01(spark, datasource, columnas, client, branch, report):
     LEmail = F.udf(FE.LimpiaEmail, StringType())
 
     # Read import.csv to get column names
-    imp = spark.read.option("header", True).csv(columnas)
-    nombresColumnas = [row[1] for row in imp.collect()]
+    nombresColumnas = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[1]).collect()
 
     # Read and process data from the source file
     data = spark.read.text(datasource)
     data = data.withColumn("columns", F.split(data["value"], "\\|"))
-    expresiones = [f"columns[{i}] as {columna}" for i, columna in enumerate(nombresColumnas)]
-    data = data.selectExpr(*expresiones)
+    data = data.selectExpr(*[f"columns[{i}] as {columna}" for i, columna in enumerate(nombresColumnas)])
 
     # Apply transformations
     data = (data
@@ -76,8 +74,7 @@ def vtausa01(spark, datasource, columnas, client, branch, report):
            )
 
     # Read export.csv to get export column names
-    expor = spark.read.option("header", True).csv(columnas)
-    nombresColumnasExp = [row[3] for row in expor.collect()]
+    nombresColumnasExp = spark.read.option("header", True).csv(columnas).rdd.map(lambda row: row[3]).collect()
 
     # Select necessary columns and filter data
     export = data.select([F.col(columna) for columna in nombresColumnasExp])
@@ -97,6 +94,8 @@ def vtausa01(spark, datasource, columnas, client, branch, report):
 
     # Insert data into the database
     cursor = cnn.cursor()
+    
+    expor = spark.read.option("header", True).csv(columnas)
     Exp = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col")).alias("cadena"))
     Exp2 = expor.groupBy().agg(F.concat_ws(",", F.collect_list("Col2")).alias("cadena2"))
 
